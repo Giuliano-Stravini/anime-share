@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "277624360609",
+    "firebase_url": "https://i-already-saw.firebaseio.com",
+    "project_id": "i-already-saw",
+    "storage_bucket": "i-already-saw.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277624360609:android:376426dc880ae429fa6ae0",
+        "android_client_info": {
+          "package_name": "br.com.alreadywatched.alreadywatched"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277624360609-7vfnms03hojjhkq7c83r667jhn7bcjai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA07_B8j8hVwGtC028qjXa1PWYzvjQFiK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277624360609-7vfnms03hojjhkq7c83r667jhn7bcjai.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
