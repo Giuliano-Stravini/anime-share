@@ -3,6 +3,7 @@ import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/anime_card_list.dart';
 import 'package:alreadywatched/ui/search_anime_page.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.userStore}) : super(key: key);
@@ -53,7 +54,7 @@ Page(){
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
+      drawer: Menu(),
       appBar: AppBar(
         centerTitle: true,
         title: InkWell(
@@ -134,5 +135,75 @@ Page(){
                 },
               ),
             ));
+  }
+}
+
+class Menu extends StatefulWidget {
+  Menu({Key key}) : super(key: key);
+
+  @override
+  MenuState createState() => MenuState();
+}
+
+class MenuState extends State<Menu> {
+  @override
+  Widget build(BuildContext context) {
+    var _userStore = Provider.of<UserStore>(context);
+
+    return Drawer(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: double.infinity,
+            child: DrawerHeader(
+              decoration: BoxDecoration(color: ThemeData.dark().primaryColor),
+              child: Container(),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton.icon(
+              icon: Icon(Icons.person),
+              label: Text("Profile"),
+              onPressed: () {},
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton.icon(
+              icon: Icon(Icons.play_arrow),
+              label: Text("Season"),
+              onPressed: () {},
+              // onPressed: () async => await Navigator.pushReplacement(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (_) => HomePage(
+              //       userStore: _userStore,
+              //     ),
+              //   ),
+              // ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton.icon(
+              icon: Icon(Icons.favorite),
+              label: Text("Favorites"),
+              onPressed: () {},
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: FlatButton.icon(
+              icon: Icon(Icons.exit_to_app, color: Colors.red),
+              label: Text("Sign out"),
+              onPressed: () async => await _userStore.signOut(),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

@@ -65,6 +65,25 @@ abstract class UserStoreBase with Store {
       }
     });
   }
+
+  @action
+  login({String email, String password}) async {
+    try {
+      isLogged = DataStatus.loading;
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      isLogged = DataStatus.done;
+    } catch (e) {
+      isLogged = DataStatus.failed;
+      print(e);
+    }
+  }
+
+  @action
+  signOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
 }
 
+@observable
 enum DataStatus { done, loading, failed }

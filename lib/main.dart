@@ -55,11 +55,18 @@ class MyApp extends StatelessWidget {
                               fontSize: Responsive().horizontal(6),
                               color: Colors.white))),
                   textTheme: TextTheme(
-                      body1: TextStyle(fontSize: Responsive().horizontal(4)),
-                      title: TextStyle(
-                          fontSize: Responsive().horizontal(6),
-                          color: Colors.black))),
-              home: Scaffold(body: CheckUser()),
+                    body1: TextStyle(fontSize: Responsive().horizontal(4)),
+                    title: TextStyle(
+                        fontSize: Responsive().horizontal(6),
+                        color: Colors.black),
+                    button: TextStyle(fontSize: Responsive().horizontal(4)),
+                  ),
+                  buttonColor: Colors.orange,
+                  iconTheme: IconThemeData(size: Responsive().horizontal(8))),
+              home: Scaffold(
+                  body: CheckUser(
+                userStore: userStore,
+              )),
             ),
           );
         }),
@@ -69,7 +76,9 @@ class MyApp extends StatelessWidget {
 }
 
 class CheckUser extends StatefulWidget {
-  CheckUser({Key key}) : super(key: key);
+  CheckUser({Key key, this.userStore}) : super(key: key);
+
+  final UserStore userStore;
 
   @override
   _CheckUserState createState() => _CheckUserState();
@@ -79,7 +88,7 @@ class _CheckUserState extends State<CheckUser> {
   @override
   void initState() {
     super.initState();
-    UserStore().checkUser();
+    widget.userStore.checkUser();
   }
 
   @override
@@ -113,8 +122,63 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController _emailController;
+  TextEditingController _passwordController;
+  bool _isObscure = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    var _userStore = Provider.of<UserStore>(context);
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          TextField(
+            controller: _emailController,
+            onChanged: (String newValue) {
+              _emailController.value.copyWith(text: newValue);
+            },
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.email),
+            ),
+          ),
+          TextField(
+            controller: _passwordController,
+            onChanged: (String newValue) {
+              _passwordController.value.copyWith(text: newValue);
+            },
+            obscureText: _isObscure,
+            decoration: InputDecoration(
+              prefixIcon: Icon(Icons.vpn_key),
+              suffixIcon: IconButton(
+                icon:
+                    Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
+                onPressed: () => setState(() {
+                  _isObscure = !_isObscure;
+                }),
+              ),
+            ),
+          ),
+          RaisedButton(
+            color: Colors.orange,
+            onPressed: () {
+              _userStore.login(
+                  email: _emailController.value.text,
+                  password: _passwordController.value.text);
+            },
+            child: Text("Login"),
+          )
+        ],
+      ),
+    );
   }
 }
