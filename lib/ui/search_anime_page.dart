@@ -1,3 +1,4 @@
+import 'package:alreadywatched/models/anime_summary.dart';
 import 'package:alreadywatched/ui/anime_info.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class SearchAnimePage extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return Query(
       options: QueryOptions(
-        documentNode: gql(animeQuery),
+        document: gql(animeQuery),
         variables: {'animeInput': query},
       ),
       builder: (QueryResult result,
@@ -57,35 +58,23 @@ class SearchAnimePage extends SearchDelegate {
           print(result.exception.graphqlErrors.toString());
           return Text(result.exception.graphqlErrors.toString());
         }
-        if (result.loading) {
+        if (result.isLoading) {
           print("loading");
           return Text("loading");
         }
         print("success");
         return ListView(
-          children: (result.data["Page"]['media'] as List)
-              .map((anime) => Column(
-                    children: <Widget>[
-                      ListTile(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => AnimeInfo(
-                                        animeId: anime['id'],
-                                      ))),
-                          leading: CachedNetworkImage(
-                            imageUrl: anime['coverImage']['large'],
-                            fit: BoxFit.fill,
-                            errorWidget: (_, a, b) => Icon(Icons.error_outline),
-                          ),
-                          title: Text(anime['title']['english'] ??
-                              anime['title']['romaji'])),
-                      Divider(
-                        color: Colors.orange,
-                      )
-                    ],
-                  ))
-              .toList(),
+          children: (result.data["Page"]['media'] as List).map((anime) {
+            var animeSummary = AnimeSummary.fromJson(anime);
+            return Column(
+              children: <Widget>[
+                AnimeTile(animeSummary: animeSummary),
+                Divider(
+                  color: Colors.orange,
+                )
+              ],
+            );
+          }).toList(),
         );
       },
     );
@@ -94,5 +83,29 @@ class SearchAnimePage extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Container();
+  }
+}
+
+class AnimeTile extends StatelessWidget {
+  const AnimeTile({
+    Key key,
+    @required this.animeSummary,
+  }) : super(key: key);
+
+  final AnimeSummary animeSummary;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => AnimeInfo(animeId: animeSummary.id))),
+        leading: CachedNetworkImage(
+          imageUrl: animeSummary.coverImage,
+          fit: BoxFit.fill,
+          errorWidget: (_, a, b) => Icon(Icons.error_outline),
+        ),
+        title: Text(animeSummary.title));
   }
 }

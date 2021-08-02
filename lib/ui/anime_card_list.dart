@@ -26,10 +26,10 @@ class AnimeCardList extends StatefulWidget {
 class _AnimeCardListState extends State<AnimeCardList> {
   @override
   Widget build(BuildContext context) {
-    var userStore = Provider.of<UserStore>(context);
+    // var userStore = Provider.of<UserProvider>(context);
     return Query(
       options: QueryOptions(
-        documentNode: gql(widget.query),
+        document: gql(widget.query),
         variables: widget.variables,
       ),
       builder: (QueryResult result,
@@ -39,7 +39,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
           print(result.exception.graphqlErrors.toString());
           return Text(result.exception.graphqlErrors.toString());
         }
-        if (result.loading) {
+        if (result.isLoading) {
           print("loading");
           return Text("loading");
         }
@@ -94,40 +94,48 @@ class _AnimeCardListState extends State<AnimeCardList> {
                               horizontal: Responsive().horizontal(2)),
                           child: Stack(
                             children: <Widget>[
-                              CachedNetworkImage(
-                                height: double.infinity,
-                                width: double.infinity,
-                                fit: BoxFit.fill,
-                                imageUrl: animeSummary.coverImage,
-                                errorWidget: (context, error, object) =>
-                                    Icon(Icons.error_outline),
+                              Hero(
+                                tag: "coverImage_${animeSummary.id}",
+                                child: CachedNetworkImage(
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  fit: BoxFit.fill,
+                                  imageUrl: animeSummary.coverImage,
+                                  errorWidget: (context, error, object) =>
+                                      Icon(Icons.error_outline),
+                                ),
                               ),
                               Positioned(
                                 top: 0,
                                 right: 0,
                                 child: Container(
-                                  color: Colors.black54,
-                                  padding: EdgeInsets.all(
-                                      Responsive().horizontal(1)),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Provider.of<UserStore>(context,
-                                              listen: false)
-                                          .updateFavoriteList(animeSummary.id);
-                                      setState(() {});
-                                    },
-                                    child: userStore
-                                            .checkFavorite(animeSummary.id)
-                                        ? Icon(
-                                            Icons.favorite,
-                                            size: Responsive().horizontal(5),
-                                          )
-                                        : Icon(
-                                            Icons.favorite_border,
-                                            size: Responsive().horizontal(5),
-                                          ),
-                                  ),
-                                ),
+                                    color: Colors.black54,
+                                    padding: EdgeInsets.all(
+                                        Responsive().horizontal(1)),
+                                    child: Container()
+                                    // InkWell(
+                                    //   onTap: () {
+                                    //     print(userStore.user.uid);
+                                    //     Provider.of<UserProvider>(context,
+                                    //             listen: false)
+                                    //         .updateFavoriteList(animeSummary.id,
+                                    //             userStore.user.uid);
+                                    //     setState(() {});
+                                    //   },
+                                    //   child: userStore
+                                    //           .checkFavorite(animeSummary.id)
+                                    //       ? Icon(
+                                    //           Icons.favorite,
+                                    //           size: Responsive().horizontal(5),
+                                    //           color: Colors.red,
+                                    //         )
+                                    //       : Icon(
+                                    //           Icons.favorite_border,
+                                    //           size: Responsive().horizontal(5),
+                                    //           color: Colors.white,
+                                    //         ),
+                                    // ),
+                                    ),
                               ),
                               Positioned(
                                 top: 0,

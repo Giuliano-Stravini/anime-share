@@ -3,19 +3,38 @@ import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/anime_card_list.dart';
 import 'package:alreadywatched/ui/search_anime_page.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.userStore}) : super(key: key);
 
   final String title;
-  final UserStore userStore;
+  final UserProvider userStore;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: YearsAnimeList(),
+    );
+  }
+}
+
+class YearsAnimeList extends StatefulWidget {
+  const YearsAnimeList({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _YearsAnimeListState createState() => _YearsAnimeListState();
+}
+
+class _YearsAnimeListState extends State<YearsAnimeList> {
   DateTime _selectedDate = DateTime.now();
   int _seasonYear;
 
@@ -50,7 +69,6 @@ Page(){
 }
 }
 ''';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +95,8 @@ Page(){
         ],
       ),
       body: ListView(
-        shrinkWrap: true,
+        // shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: Responsive().horizontal(8)),
         children: <Widget>[
           AnimeCardList(
             query: seasonQuery,
@@ -148,7 +167,7 @@ class Menu extends StatefulWidget {
 class MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
-    var _userStore = Provider.of<UserStore>(context);
+    var _userStore = Provider.of<UserProvider>(context);
 
     return Drawer(
       child: Column(
@@ -173,22 +192,6 @@ class MenuState extends State<Menu> {
           SizedBox(
             width: double.infinity,
             child: FlatButton.icon(
-              icon: Icon(Icons.play_arrow),
-              label: Text("Season"),
-              onPressed: () {},
-              // onPressed: () async => await Navigator.pushReplacement(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (_) => HomePage(
-              //       userStore: _userStore,
-              //     ),
-              //   ),
-              // ),
-            ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: FlatButton.icon(
               icon: Icon(Icons.favorite),
               label: Text("Favorites"),
               onPressed: () {},
@@ -199,11 +202,24 @@ class MenuState extends State<Menu> {
             child: FlatButton.icon(
               icon: Icon(Icons.exit_to_app, color: Colors.red),
               label: Text("Sign out"),
-              onPressed: () async => await _userStore.signOut(),
+              onPressed: () {},
             ),
           )
         ],
       ),
     );
+  }
+}
+
+class FavoritePage extends StatelessWidget {
+  const FavoritePage({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    var _userStore = Provider.of<UserProvider>(context);
+
+    // var query =
+
+    // Scaffold(body: Observer(builder: (_) => ListView()));
   }
 }

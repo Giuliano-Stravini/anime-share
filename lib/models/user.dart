@@ -1,9 +1,6 @@
-import 'package:mobx/mobx.dart';
-
 class User {
-  @observable
-  ObservableFuture<ObservableList<int>> favoriteIds =
-      ObservableFuture<ObservableList<int>>.value(ObservableList<int>());
+  List<int> favoriteIds = [];
   String name;
   String email;
+  String uid;
 }

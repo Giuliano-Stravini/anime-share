@@ -2,15 +2,15 @@ import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
 final HttpLink httpLink = HttpLink(
-  uri: 'https://graphql.anilist.co',
-  headers: {
+  'https://graphql.anilist.co',
+  defaultHeaders: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
@@ -24,7 +24,7 @@ final HttpLink httpLink = HttpLink(
 
 ValueNotifier<GraphQLClient> client = ValueNotifier(
   GraphQLClient(
-    cache: InMemoryCache(),
+    cache: GraphQLCache(),
     link: httpLink,
   ),
 );
@@ -40,33 +40,36 @@ class MyApp extends StatelessWidget {
               maxHeight: constraintBox.maxHeight,
               maxWidth: constraintBox.maxWidth);
 
-          var userStore = UserStore();
+          var userStore = UserProvider();
           return MultiProvider(
             providers: [
-              Provider<UserStore>(
+              Provider<UserProvider>(
                 create: (_) => userStore,
-              )
+              ),
             ],
             child: MaterialApp(
               theme: ThemeData.dark().copyWith(
                   appBarTheme: AppBarTheme(
                       textTheme: TextTheme(
-                          title: TextStyle(
+                          headline6: TextStyle(
                               fontSize: Responsive().horizontal(6),
                               color: Colors.white))),
                   textTheme: TextTheme(
-                    body1: TextStyle(fontSize: Responsive().horizontal(4)),
-                    title: TextStyle(
+                    bodyText1: TextStyle(fontSize: Responsive().horizontal(4)),
+                    headline6: TextStyle(
                         fontSize: Responsive().horizontal(6),
                         color: Colors.black),
                     button: TextStyle(fontSize: Responsive().horizontal(4)),
                   ),
                   buttonColor: Colors.orange,
                   iconTheme: IconThemeData(size: Responsive().horizontal(8))),
-              home: Scaffold(
-                  body: CheckUser(
-                userStore: userStore,
-              )),
+              home: Scaffold(body: HomePage()
+
+                  //      CheckUser(
+                  //   userStore: userStore,
+                  // ),
+
+                  ),
             ),
           );
         }),
@@ -75,44 +78,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class CheckUser extends StatefulWidget {
-  CheckUser({Key key, this.userStore}) : super(key: key);
+// class CheckUser extends StatefulWidget {
+//   CheckUser({Key key, this.userStore}) : super(key: key);
 
-  final UserStore userStore;
+//   final UserProvider userStore;
 
-  @override
-  _CheckUserState createState() => _CheckUserState();
-}
+//   @override
+//   _CheckUserState createState() => _CheckUserState();
+// }
 
-class _CheckUserState extends State<CheckUser> {
-  @override
-  void initState() {
-    super.initState();
-    widget.userStore.checkUser();
-  }
+// class _CheckUserState extends State<CheckUser> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     widget.userStore.checkUser();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    var _userStore = Provider.of<UserStore>(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     var _userStore = Provider.of<UserProvider>(context);
 
-    return Observer(
-      builder: (_) {
-        switch (_userStore.isLogged) {
-          case DataStatus.done:
-            return HomePage(
-              userStore: _userStore,
-            );
-            break;
-          case DataStatus.failed:
-            return LoginPage();
-            break;
-          default:
-            return Container();
-        }
-      },
-    );
-  }
-}
+//     switch (_userStore.isLogged) {
+//       case DataStatus.done:
+//         return HomePage(
+//           userStore: _userStore,
+//         );
+//         break;
+//       case DataStatus.failed:
+//         return LoginPage();
+//         break;
+//       default:
+//         return Container();
+//     }
+//   }
+// }
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -135,49 +134,170 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    var _userStore = Provider.of<UserStore>(context);
+    var _userStore = Provider.of<UserProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          TextField(
-            controller: _emailController,
-            onChanged: (String newValue) {
-              _emailController.value.copyWith(text: newValue);
-            },
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.email),
-            ),
-          ),
-          TextField(
-            controller: _passwordController,
-            onChanged: (String newValue) {
-              _passwordController.value.copyWith(text: newValue);
-            },
-            obscureText: _isObscure,
-            decoration: InputDecoration(
-              prefixIcon: Icon(Icons.vpn_key),
-              suffixIcon: IconButton(
-                icon:
-                    Icon(_isObscure ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() {
-                  _isObscure = !_isObscure;
-                }),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Responsive().horizontal(6)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Spacer(),
+            Text("Logo"),
+            Spacer(),
+            TextField(
+              controller: _emailController,
+              onChanged: (String newValue) {
+                _emailController.value.copyWith(text: newValue);
+              },
+              decoration: InputDecoration(
+                hintText: "E-mail",
+                prefixIcon: Icon(Icons.email),
               ),
             ),
-          ),
-          RaisedButton(
-            color: Colors.orange,
-            onPressed: () {
-              _userStore.login(
-                  email: _emailController.value.text,
-                  password: _passwordController.value.text);
-            },
-            child: Text("Login"),
-          )
-        ],
+            TextField(
+              controller: _passwordController,
+              onChanged: (String newValue) {
+                _passwordController.value.copyWith(text: newValue);
+              },
+              obscureText: _isObscure,
+              decoration: InputDecoration(
+                hintText: "Password",
+                prefixIcon: Icon(Icons.vpn_key),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _isObscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() {
+                    _isObscure = !_isObscure;
+                  }),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: Responsive().horizontal(4)),
+              child: SizedBox(
+                width: double.infinity,
+                child: RaisedButton(
+                  color: Colors.orange,
+                  onPressed: () {
+                    // _userStore.login(
+                    //     email: _emailController.value.text,
+                    //     password: _passwordController.value.text);
+                  },
+                  child: Text("Login"),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: OutlineButton(
+                highlightedBorderColor: Colors.orange,
+                color: Colors.orange,
+                onPressed: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (_) => SignUpPage())),
+                child: Text("SignUp"),
+              ),
+            ),
+            Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SignUpPage extends StatefulWidget {
+  SignUpPage({Key key}) : super(key: key);
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  var _emailController = TextEditingController();
+  var _passwordController = TextEditingController();
+  bool _isObscure = true;
+  bool _loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    var _userStore = Provider.of<UserProvider>(context);
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Responsive().horizontal(6)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextField(
+              controller: _emailController,
+              onChanged: (String newValue) {
+                _emailController.value.copyWith(text: newValue);
+              },
+              decoration: InputDecoration(
+                hintText: "E-mail",
+                prefixIcon: Icon(Icons.email),
+              ),
+            ),
+            TextField(
+              controller: _passwordController,
+              onChanged: (String newValue) {
+                _passwordController.value.copyWith(text: newValue);
+              },
+              obscureText: _isObscure,
+              decoration: InputDecoration(
+                hintText: "Password",
+                prefixIcon: Icon(Icons.vpn_key),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      _isObscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() {
+                    _isObscure = !_isObscure;
+                  }),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.only(top: Responsive().horizontal(6)),
+                child: !_loading
+                    ? RaisedButton(
+                        color: Colors.orange,
+                        onPressed: () async {
+                          // setState(() {
+                          //   _loading = true;
+                          // });
+                          // String error = await _userStore.signUp(
+                          //     email: _emailController.value.text,
+                          //     password: _passwordController.value.text);
+
+                          // if (error == null) {
+                          //   Navigator.pop(context);
+                          // } else {
+                          //   ScaffoldMessenger.of(context)
+                          //       .showSnackBar(SnackBar(content: Text(error)));
+                          // }
+
+                          // setState(() {
+                          //   _loading = false;
+                          // });
+
+                          // print(error);
+                        },
+                        child: Text("Register"),
+                      )
+                    : Center(
+                        child: CircularProgressIndicator(
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.orange),
+                      )),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,89 +1,105 @@
+import 'dart:async';
+
 import 'package:alreadywatched/models/user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mobx/mobx.dart';
 
-part 'user_store.g.dart';
+class UserProvider {
+//   var user = User();
 
-class UserStore = UserStoreBase with _$UserStore;
+//   StreamSubscription _listener;
 
-abstract class UserStoreBase with Store {
-  @observable
-  var user = User();
+//   fetchUserSnapshot({String uid}) {
+//     if (_listener != null) {
+//       _listener.cancel();
+//     }
+//     _listener =
+//         Firestore().collection("user").document(uid).snapshots().listen((doc) {
+//       if (doc.exists) {
+//         user.favoriteIds.clear();
 
-  @action
-  fetchUserSnapshot({String uid}) {
-    Firestore().collection("user").where(uid).snapshots().listen((docs) {
-      if (docs.documents.isNotEmpty) {
-        var doc = docs.documents.first;
-        user.favoriteIds.value.clear();
+//         (doc.data['animes'] as List).forEach((i) {
+//           user.favoriteIds.add(i['id']);
+//         });
+//       }
+//     });
+//   }
 
-        (doc.data['animes'] as List).forEach((i) {
-          user.favoriteIds.value.add(i['id']);
-        });
-      }
-    });
-  }
+//   updateFavoriteList(int id, String uid) async {
+//     if (user.favoriteIds.contains(id)) {
+//       user.favoriteIds.remove(id);
+//     } else {
+//       user.favoriteIds.add(id);
+//     }
+//     var animes = List<Map<String, int>>();
 
-  @action
-  updateFavoriteList(int id) async {
-    if (user.favoriteIds.value.contains(id)) {
-      user.favoriteIds.value.remove(id);
-    } else {
-      user.favoriteIds.value.add(id);
-    }
-    var animes = List<Map<String, int>>();
+//     user.favoriteIds.forEach((i) {
+//       animes.add({"id": i});
+//     });
 
-    user.favoriteIds.value.forEach((i) {
-      animes.add({"id": i});
-    });
+//     await Firestore()
+//         .collection("user")
+//         .document(uid)
+//         .updateData({"animes": animes});
+//   }
 
-    await Firestore()
-        .collection("user")
-        .document("D3SAzycwFpOT5JjE6ePj")
-        .updateData({"animes": animes});
-  }
+//   bool checkFavorite(int id) {
+//     return user.favoriteIds.contains(id);
+//   }
 
-  @action
-  bool checkFavorite(int id) {
-    return user.favoriteIds.value.contains(id);
-  }
+//   DataStatus isLogged;
 
-  @observable
-  DataStatus isLogged;
+//   checkUser() {
+//     FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
+//       isLogged = DataStatus.loading;
+//       if (firebaseUser != null) {
+//         user.uid = firebaseUser.uid;
+//         fetchUserSnapshot(uid: firebaseUser.uid);
 
-  @action
-  checkUser() {
-    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) async {
-      isLogged = DataStatus.loading;
-      if (firebaseUser != null) {
-        fetchUserSnapshot(uid: firebaseUser.uid);
+//         isLogged = DataStatus.done;
+//       } else {
+//         isLogged = DataStatus.failed;
+//       }
+//     });
+//   }
 
-        isLogged = DataStatus.done;
-      } else {
-        isLogged = DataStatus.failed;
-      }
-    });
-  }
+//   login({String email, String password}) async {
+//     try {
+//       isLogged = DataStatus.loading;
+//       await FirebaseAuth.instance
+//           .signInWithEmailAndPassword(email: email, password: password);
+//       isLogged = DataStatus.done;
+//     } catch (e) {
+//       isLogged = DataStatus.failed;
+//       print(e);
+//     }
+//   }
 
-  @action
-  login({String email, String password}) async {
-    try {
-      isLogged = DataStatus.loading;
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      isLogged = DataStatus.done;
-    } catch (e) {
-      isLogged = DataStatus.failed;
-      print(e);
-    }
-  }
+//   Future<String> signUp({String email, String password}) async {
+//     try {
+//       var authResult = await FirebaseAuth.instance
+//           .createUserWithEmailAndPassword(email: email, password: password);
 
-  @action
-  signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
+//       await Firestore()
+//           .collection("user")
+//           .document(authResult.user.uid)
+//           .setData({
+//         "animes": [
+//           {"id": 0}
+//         ],
+//         "friends": [],
+//         "name": "default",
+//         "email": email
+//       });
+//       return null;
+//     } catch (e) {
+//       print(e);
+//       return e.toString();
+//     }
+//   }
+
+//   signOut() async {
+//     await FirebaseAuth.instance.signOut();
+//   }
 }
 
-@observable
 enum DataStatus { done, loading, failed }

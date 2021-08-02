@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:alreadywatched/models/anime.dart';
 import 'package:alreadywatched/responsive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart' as http;
 
 var animeInfoQuery = r'''
 query($id: Int!){
@@ -48,7 +50,7 @@ class AnimeInfo extends StatelessWidget {
     return Scaffold(
       body: Query(
         options: QueryOptions(
-          documentNode: gql(animeInfoQuery),
+          document: gql(animeInfoQuery),
           variables: {"id": animeId},
         ),
         builder: (QueryResult result,
@@ -57,7 +59,7 @@ class AnimeInfo extends StatelessWidget {
             print(result.exception.graphqlErrors.toString());
             return Text(result.exception.graphqlErrors.toString());
           }
-          if (result.loading) {
+          if (result.isLoading) {
             print("loading");
             return Text("loading");
           }
@@ -98,8 +100,9 @@ class AnimeInfo extends StatelessWidget {
                       right: 0,
                       child: IconButton(
                         icon: Icon(Icons.share),
-                        onPressed: () => Share.text("title",
-                            "${anime.title}(${anime.titleEn})", 'text/plain'),
+                        onPressed: () {},
+                        // onPressed: () => Share.text("title",
+                        //     "${anime.title}(${anime.titleEn})", 'text/plain'),
                       ),
                     ),
                   ],
@@ -124,15 +127,19 @@ class AnimeInfo extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: Responsive().horizontal(4)),
-                      child: CachedNetworkImage(
-                        width: Responsive().horizontal(42),
-                        imageUrl: result.data['Media']['coverImage']['large'] ??
-                            "https://picsum.photos/200/400",
-                        errorWidget: (context, error, object) => SizedBox(
-                            child: Icon(
-                          Icons.error_outline,
-                          size: Responsive().horizontal(4),
-                        )),
+                      child: Hero(
+                        tag: "coverImage_$animeId",
+                        child: CachedNetworkImage(
+                          width: Responsive().horizontal(42),
+                          imageUrl: result.data['Media']['coverImage']
+                                  ['large'] ??
+                              "https://picsum.photos/200/400",
+                          errorWidget: (context, error, object) => SizedBox(
+                              child: Icon(
+                            Icons.error_outline,
+                            size: Responsive().horizontal(4),
+                          )),
+                        ),
                       ),
                     ),
                     Container(
@@ -168,7 +175,14 @@ class AnimeInfo extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text("Description: "),
-                      Text(anime.description),
+                      FutureBuilder<String>(
+                          future: translateApi(anime.description),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return Text(anime.description);
+                            }
+                            return Text(snapshot.data);
+                          }),
                     ],
                   ),
                 ),
@@ -182,11 +196,30 @@ class AnimeInfo extends StatelessWidget {
 
   Padding _buildInfoText({String text, String info}) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: Responsive().horizontal(1)),
-      child: Text(
-        "$text: $info",
-        softWrap: true,
-      ),
-    );
+        padding: EdgeInsets.symmetric(vertical: Responsive().horizontal(1)),
+        child: Text(
+          "$text: $info",
+          softWrap: true,
+        ));
+  }
+
+  Future<String> translateApi(String text) async {
+    try {
+      var response = await http.post(
+          Uri.parse("https://translator.contrateumdev.com.br/api/translate"),
+          body: {'from': 'en', 'to': 'pt', 'text': text});
+
+      if (response.statusCode != 200) {
+        throw "Error ${response.statusCode}";
+      }
+
+      var result = jsonDecode(response.body)['translate']['translations'][0]
+          ['translation'];
+
+      return result;
+    } catch (e) {
+      print(e);
+      return text;
+    }
   }
 }
