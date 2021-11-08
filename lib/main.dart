@@ -2,6 +2,8 @@ import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
@@ -36,9 +38,9 @@ class MyApp extends StatelessWidget {
       client: client,
       child: CacheProvider(
         child: LayoutBuilder(builder: (context, constraintBox) {
-          Responsive().init(
-              maxHeight: constraintBox.maxHeight,
-              maxWidth: constraintBox.maxWidth);
+          // Responsive().init(
+          //     maxHeight: constraintBox.maxHeight,
+          //     maxWidth: constraintBox.maxWidth);
 
           var userStore = UserProvider();
           return MultiProvider(
@@ -48,21 +50,23 @@ class MyApp extends StatelessWidget {
               ),
             ],
             child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               theme: ThemeData.dark().copyWith(
-                  appBarTheme: AppBarTheme(
-                      textTheme: TextTheme(
-                          headline6: TextStyle(
-                              fontSize: Responsive().horizontal(6),
-                              color: Colors.white))),
-                  textTheme: TextTheme(
-                    bodyText1: TextStyle(fontSize: Responsive().horizontal(4)),
-                    headline6: TextStyle(
-                        fontSize: Responsive().horizontal(6),
-                        color: Colors.black),
-                    button: TextStyle(fontSize: Responsive().horizontal(4)),
-                  ),
-                  buttonColor: Colors.orange,
-                  iconTheme: IconThemeData(size: Responsive().horizontal(8))),
+                // textTheme: TextTheme(
+                //   bodyText1: TextStyle(fontSize: Responsive().horizontal(4)),
+                //   headline6: TextStyle(
+                //       fontSize: Responsive().horizontal(6),
+                //       color: Colors.black),
+                //   button: TextStyle(fontSize: Responsive().horizontal(4)),
+                // ),
+                colorScheme: ThemeData.dark()
+                    .colorScheme
+                    .copyWith(primary: Colors.orange),
+                timePickerTheme: TimePickerThemeData(),
+                buttonTheme: ButtonThemeData(buttonColor: Colors.orange),
+                // iconTheme: IconThemeData(size: Responsive().horizontal(8)),
+              ),
               home: Scaffold(body: HomePage()
 
                   //      CheckUser(
@@ -139,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Responsive().horizontal(6)),
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -175,11 +179,11 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: Responsive().horizontal(4)),
+              padding: EdgeInsets.only(top: 8),
               child: SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                  color: Colors.orange,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.orange),
                   onPressed: () {
                     // _userStore.login(
                     //     email: _emailController.value.text,
@@ -191,9 +195,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(
               width: double.infinity,
-              child: OutlineButton(
-                highlightedBorderColor: Colors.orange,
-                color: Colors.orange,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(primary: Colors.orange),
                 onPressed: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => SignUpPage())),
                 child: Text("SignUp"),
@@ -227,7 +230,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Responsive().horizontal(6)),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -262,10 +265,10 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(
               width: double.infinity,
               child: Padding(
-                padding: EdgeInsets.only(top: Responsive().horizontal(6)),
+                padding: EdgeInsets.only(top: 8),
                 child: !_loading
-                    ? RaisedButton(
-                        color: Colors.orange,
+                    ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(primary: Colors.orange),
                         onPressed: () async {
                           // setState(() {
                           //   _loading = true;

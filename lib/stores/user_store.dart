@@ -1,7 +1,7 @@
-import 'dart:async';
+// import 'dart:async';
 
-import 'package:alreadywatched/models/user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:alreadywatched/models/user.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 class UserProvider {
 //   var user = User();

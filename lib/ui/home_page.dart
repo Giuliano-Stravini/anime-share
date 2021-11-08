@@ -1,8 +1,8 @@
-import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/anime_card_list.dart';
 import 'package:alreadywatched/ui/search_anime_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
 
@@ -47,7 +47,7 @@ class _YearsAnimeListState extends State<YearsAnimeList> {
 
   var seasonQuery = r'''
 query($seasonYear: Int! ,$season: MediaSeason!){
-Page(){
+Page(perPage: 10){
   pageInfo {
       total
       perPage
@@ -71,21 +71,13 @@ Page(){
 ''';
   @override
   Widget build(BuildContext context) {
+    print(AppLocalizations.of(context).helloWorld);
     return Scaffold(
-      drawer: Menu(),
+      // drawer: Menu(),
       appBar: AppBar(
-        centerTitle: true,
-        title: InkWell(
-          onTap: () => _buildShowBottomSheet(context),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Season $_seasonYear"),
-              Icon(Icons.arrow_drop_down),
-            ],
-          ),
-        ),
+        leading: Container(),
+        leadingWidth: 0,
+        title: Text('Title'),
         actions: <Widget>[
           IconButton(
             onPressed: () =>
@@ -95,25 +87,50 @@ Page(){
         ],
       ),
       body: ListView(
-        // shrinkWrap: true,
-        padding: EdgeInsets.only(bottom: Responsive().horizontal(8)),
+        padding: EdgeInsets.only(bottom: 16),
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 8),
+            child: InkWell(
+              onTap: () => _buildShowBottomSheet(context, _seasonYear),
+              child: Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Season $_seasonYear",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+          ),
           AnimeCardList(
             query: seasonQuery,
             variables: {
               "seasonYear": _seasonYear,
               "season": "WINTER",
             },
-            title: "Winter",
+            title: "TOP 10 Winter*",
           ),
-          Text("*December ${(_seasonYear - 1)} to February of $_seasonYear"),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "*December ${(_seasonYear - 1)} to February of $_seasonYear",
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
           AnimeCardList(
             query: seasonQuery,
             variables: {
               "seasonYear": _seasonYear,
               "season": "SPRING",
             },
-            title: "Spring",
+            title: "TOP 10 Spring",
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -121,7 +138,7 @@ Page(){
               "seasonYear": _seasonYear,
               "season": "SUMMER",
             },
-            title: "Summer",
+            title: "TOP 10 Summer",
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -129,30 +146,29 @@ Page(){
               "seasonYear": _seasonYear,
               "season": "FALL",
             },
-            title: "Fall",
+            title: "TOP 10 Fall",
           ),
         ],
       ),
     );
   }
 
-  PersistentBottomSheetController _buildShowBottomSheet(BuildContext context) {
+  PersistentBottomSheetController _buildShowBottomSheet(
+      BuildContext context, int _currentYear) {
     return showBottomSheet(
         context: context,
-        builder: (BuildContext context) => Container(
-              height: Responsive().horizontal(40),
-              child: YearPicker(
-                selectedDate: _selectedDate,
-                firstDate: DateTime(1995),
-                lastDate: DateTime.now(),
-                onChanged: (val) {
-                  setState(() {
-                    _selectedDate = val;
-                    _seasonYear = val.year;
-                  });
-                  Navigator.pop(context);
-                },
-              ),
+        constraints: BoxConstraints(minHeight: 0, maxHeight: 180),
+        builder: (BuildContext context) => YearPicker(
+              selectedDate: _selectedDate,
+              firstDate: DateTime(1990),
+              lastDate: DateTime.now(),
+              onChanged: (val) {
+                setState(() {
+                  _selectedDate = val;
+                  _seasonYear = val.year;
+                });
+                Navigator.pop(context);
+              },
             ));
   }
 }
@@ -183,7 +199,7 @@ class MenuState extends State<Menu> {
           ),
           SizedBox(
             width: double.infinity,
-            child: FlatButton.icon(
+            child: TextButton.icon(
               icon: Icon(Icons.person),
               label: Text("Profile"),
               onPressed: () {},
@@ -191,7 +207,7 @@ class MenuState extends State<Menu> {
           ),
           SizedBox(
             width: double.infinity,
-            child: FlatButton.icon(
+            child: TextButton.icon(
               icon: Icon(Icons.favorite),
               label: Text("Favorites"),
               onPressed: () {},
@@ -199,7 +215,7 @@ class MenuState extends State<Menu> {
           ),
           SizedBox(
             width: double.infinity,
-            child: FlatButton.icon(
+            child: TextButton.icon(
               icon: Icon(Icons.exit_to_app, color: Colors.red),
               label: Text("Sign out"),
               onPressed: () {},
@@ -217,6 +233,8 @@ class FavoritePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _userStore = Provider.of<UserProvider>(context);
+
+    return Container();
 
     // var query =
 
