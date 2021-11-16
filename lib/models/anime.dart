@@ -14,7 +14,7 @@ class Anime {
   String startDate;
   String endDate;
   int episodes;
-  List<dynamic> genres;
+  List<String> genres;
 
   Anime({
     this.title,
@@ -59,6 +59,6 @@ class Anime {
                 json['endDate']['month'], json['endDate']['day']))
             : "-",
         episodes: json['episodes'],
-        genres: json['genres'],
+        genres: (json['genres'] as List).map((e) => e.toString()).toList(),
       );
 }

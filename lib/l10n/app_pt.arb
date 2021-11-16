@@ -1,3 +1,20 @@
 {
-    "helloWorld": "Olá, Mundo!"
+    "winter": "Inverno",
+    "fall": "Outono",
+    "summer": "Verão",
+    "spring": "Primavera",
+    "season": "Temporada",
+    "winterSeasonDuration": "Dezembro/ [X] até Fevereiro/ [Y]",
+    "title": "Titulo",
+    "score": "Nota",
+    "start": "Começo",
+    "end": "Fim",
+    "genres": "Genero",
+    "episodes": "Episódios",
+    "description": "Sinopse",
+    "finished": "Finalizado",
+    "releasing": "No ar",
+    "notYetReleased": "Em produção",
+    "cancelled": "Cancelado",
+    "hiatus": "Hiato"
 }

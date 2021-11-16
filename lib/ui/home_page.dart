@@ -6,25 +6,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title, this.userStore}) : super(key: key);
-
-  final String title;
-  final UserProvider userStore;
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: YearsAnimeList(),
-    );
-  }
-}
-
 class YearsAnimeList extends StatefulWidget {
   const YearsAnimeList({
     Key key,
@@ -46,8 +27,8 @@ class _YearsAnimeListState extends State<YearsAnimeList> {
   }
 
   var seasonQuery = r'''
-query($seasonYear: Int! ,$season: MediaSeason!){
-Page(perPage: 10){
+query($seasonYear: Int! ,$season: MediaSeason!, $count: Int!){
+Page(perPage: $count){
   pageInfo {
       total
       perPage
@@ -71,7 +52,6 @@ Page(perPage: 10){
 ''';
   @override
   Widget build(BuildContext context) {
-    print(AppLocalizations.of(context).helloWorld);
     return Scaffold(
       // drawer: Menu(),
       appBar: AppBar(
@@ -98,7 +78,7 @@ Page(perPage: 10){
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Season $_seasonYear",
+                    "${AppLocalizations.of(context).season} $_seasonYear",
                     style: TextStyle(color: Colors.white),
                   ),
                   Icon(
@@ -114,13 +94,14 @@ Page(perPage: 10){
             variables: {
               "seasonYear": _seasonYear,
               "season": "WINTER",
+              "count": 10
             },
-            title: "TOP 10 Winter*",
+            title: "TOP 10 ${AppLocalizations.of(context).winter}*",
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "*December ${(_seasonYear - 1)} to February of $_seasonYear",
+              '*${AppLocalizations.of(context).winterSeasonDuration.replaceFirst('[X]', (_seasonYear - 1).toString()).replaceFirst('[Y]', _seasonYear.toString())}',
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -129,24 +110,27 @@ Page(perPage: 10){
             variables: {
               "seasonYear": _seasonYear,
               "season": "SPRING",
+              "count": 10
             },
-            title: "TOP 10 Spring",
+            title: "TOP 10 ${AppLocalizations.of(context).spring}",
           ),
           AnimeCardList(
             query: seasonQuery,
             variables: {
               "seasonYear": _seasonYear,
               "season": "SUMMER",
+              "count": 10
             },
-            title: "TOP 10 Summer",
+            title: "TOP 10 ${AppLocalizations.of(context).summer}",
           ),
           AnimeCardList(
             query: seasonQuery,
             variables: {
               "seasonYear": _seasonYear,
               "season": "FALL",
+              "count": 10
             },
-            title: "TOP 10 Fall",
+            title: "TOP 10 ${AppLocalizations.of(context).fall}",
           ),
         ],
       ),

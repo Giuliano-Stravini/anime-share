@@ -4,6 +4,7 @@ import 'package:alreadywatched/models/anime_summary.dart';
 import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/anime_info.dart';
+import 'package:alreadywatched/ui/search_anime_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -73,27 +74,80 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 children: result.isLoading
-                    ? <Widget>[
-                        Shimmer.fromColors(
+                    ? List.generate(
+                        9,
+                        (index) => Shimmer.fromColors(
                             child: Container(),
                             baseColor: Colors.grey,
-                            highlightColor: Colors.orange)
-                      ]
-                    : (result.data['Page']["media"] as List).map((animeJson) {
-                        var animeSummary = AnimeSummary.fromJson(animeJson);
+                            highlightColor: Colors.orange))
+                    : [
+                        ...(result.data['Page']["media"] as List)
+                            .map((animeJson) {
+                          var animeSummary = AnimeSummary.fromJson(animeJson);
 
-                        return InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AnimeInfo(
-                                animeId: animeSummary.id,
+                          return InkWell(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => AnimeInfo(
+                                  animeId: animeSummary.id,
+                                ),
                               ),
                             ),
+                            child: _buildCard(animeSummary),
+                          );
+                        }).toList(),
+                        TextButton(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_circle_outline,
+                                size: 80,
+                              ),
+                              Text('Ver mais...'),
+                            ],
                           ),
-                          child: _buildCard(animeSummary),
-                        );
-                      }).toList(),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return Query(
+                                  options: QueryOptions(
+                                    document: gql(widget.query
+                                        .replaceAll("\$count: Int!", "")
+                                        .replaceAll("perPage: \$count", "")),
+                                    variables: widget.variables,
+                                  ),
+                                  builder: (QueryResult result,
+                                      {VoidCallback refetch,
+                                      FetchMore fetchMore}) {
+                                    return Scaffold(
+                                      appBar: AppBar(
+                                        title: Text("Todos"),
+                                      ),
+                                      body: result.isLoading
+                                          ? Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : ListView(
+                                              children: (result.data['Page']
+                                                      ["media"] as List)
+                                                  .map((animeJson) {
+                                              var animeSummary =
+                                                  AnimeSummary.fromJson(
+                                                      animeJson);
+                                              return AnimeItem(
+                                                animeSummary: animeSummary,
+                                              );
+                                            }).toList()),
+                                    );
+                                  });
+                            }));
+                          },
+                        ),
+                      ],
               ),
             ),
           ],

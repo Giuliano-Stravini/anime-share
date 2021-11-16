@@ -1,3 +1,20 @@
 {
-    "helloWorld": "¡Hola Mundo!"
+    "winter": "Winter",
+    "fall": "Fall",
+    "summer": "Summer",
+    "spring": "Spring",
+    "season": "Season",
+    "winterSeasonDuration": "December/ [X] to February/ [Y]",
+    "title": "Title",
+    "score": "Score",
+    "start": "Start",
+    "end": "End",
+    "genres": "Genres",
+    "episodes": "Episodes",
+    "description": "Description",
+     "finished": "Finished",
+    "releasing": "Releasing",
+    "notYetReleased": "notYetReleased",
+    "cancelled": "Cancelled",
+    "hiatus": "Hiatus"
 }

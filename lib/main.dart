@@ -38,10 +38,6 @@ class MyApp extends StatelessWidget {
       client: client,
       child: CacheProvider(
         child: LayoutBuilder(builder: (context, constraintBox) {
-          // Responsive().init(
-          //     maxHeight: constraintBox.maxHeight,
-          //     maxWidth: constraintBox.maxWidth);
-
           var userStore = UserProvider();
           return MultiProvider(
             providers: [
@@ -53,21 +49,27 @@ class MyApp extends StatelessWidget {
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               theme: ThemeData.dark().copyWith(
-                // textTheme: TextTheme(
-                //   bodyText1: TextStyle(fontSize: Responsive().horizontal(4)),
-                //   headline6: TextStyle(
-                //       fontSize: Responsive().horizontal(6),
-                //       color: Colors.black),
-                //   button: TextStyle(fontSize: Responsive().horizontal(4)),
-                // ),
                 colorScheme: ThemeData.dark()
                     .colorScheme
                     .copyWith(primary: Colors.orange),
                 timePickerTheme: TimePickerThemeData(),
                 buttonTheme: ButtonThemeData(buttonColor: Colors.orange),
-                // iconTheme: IconThemeData(size: Responsive().horizontal(8)),
               ),
-              home: Scaffold(body: HomePage()
+              home: Scaffold(
+                  // bottomNavigationBar: BottomNavigationBar(
+                  //   type: BottomNavigationBarType.shifting,
+                  //   items: [
+                  //     BottomNavigationBarItem(
+                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
+                  //     BottomNavigationBarItem(
+                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
+                  //     BottomNavigationBarItem(
+                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
+                  //     BottomNavigationBarItem(
+                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
+                  //   ],
+                  // ),
+                  body: YearsAnimeList()
 
                   //      CheckUser(
                   //   userStore: userStore,

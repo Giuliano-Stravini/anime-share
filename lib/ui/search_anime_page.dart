@@ -56,24 +56,18 @@ class SearchAnimePage extends SearchDelegate {
         if (result.exception != null) {
           print("error");
           print(result.exception.graphqlErrors.toString());
-          return Text(result.exception.graphqlErrors.toString());
+          return Material(
+              child: Center(
+                  child: Text(result.exception.graphqlErrors.toString())));
         }
         if (result.isLoading) {
-          print("loading");
-          return Text("loading");
+          return Center(child: CircularProgressIndicator());
         }
-        print("success");
+
         return ListView(
           children: (result.data["Page"]['media'] as List).map((anime) {
             var animeSummary = AnimeSummary.fromJson(anime);
-            return Column(
-              children: <Widget>[
-                AnimeTile(animeSummary: animeSummary),
-                Divider(
-                  color: Colors.orange,
-                )
-              ],
-            );
+            return AnimeItem(animeSummary: animeSummary);
           }).toList(),
         );
       },
@@ -86,8 +80,8 @@ class SearchAnimePage extends SearchDelegate {
   }
 }
 
-class AnimeTile extends StatelessWidget {
-  const AnimeTile({
+class AnimeItem extends StatelessWidget {
+  const AnimeItem({
     Key key,
     @required this.animeSummary,
   }) : super(key: key);
@@ -96,16 +90,62 @@ class AnimeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        onTap: () => Navigator.push(
+    return Column(
+      children: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => AnimeInfo(animeId: animeSummary.id))),
-        leading: CachedNetworkImage(
-          imageUrl: animeSummary.coverImage,
-          fit: BoxFit.fill,
-          errorWidget: (_, a, b) => Icon(Icons.error_outline),
+              builder: (_) => AnimeInfo(animeId: animeSummary.id),
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: CachedNetworkImage(
+                  height: 70,
+                  imageUrl: animeSummary.coverImage,
+                  fit: BoxFit.fill,
+                  errorWidget: (_, a, b) => Icon(Icons.error_outline),
+                ),
+              ),
+              Expanded(
+                  flex: 5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 4.0),
+                    child: Text(animeSummary.title),
+                  ))
+            ],
+          ),
         ),
-        title: Text(animeSummary.title));
+        Divider(
+          color: Colors.orange,
+        )
+      ],
+    );
   }
 }
+
+// class AnimeTile extends StatelessWidget {
+//   const AnimeTile({
+//     Key key,
+//     @required this.animeSummary,
+//   }) : super(key: key);
+
+//   final AnimeSummary animeSummary;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return ListTile(
+//         onTap: () => Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//                 builder: (_) => AnimeInfo(animeId: animeSummary.id))),
+//         leading: CachedNetworkImage(
+//           imageUrl: animeSummary.coverImage,
+//           fit: BoxFit.fill,
+//           errorWidget: (_, a, b) => Icon(Icons.error_outline),
+//         ),
+//         title: Text(animeSummary.title));
+//   }
+// }
