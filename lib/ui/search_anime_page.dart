@@ -51,21 +51,21 @@ class SearchAnimePage extends SearchDelegate {
         document: gql(animeQuery),
         variables: {'animeInput': query},
       ),
-      builder: (QueryResult result,
-          {VoidCallback refetch, FetchMore fetchMore}) {
-        if (result.exception != null) {
+      builder: (QueryResult? result,
+          {VoidCallback? refetch, FetchMore? fetchMore}) {
+        if (result!.exception != null) {
           print("error");
-          print(result.exception.graphqlErrors.toString());
+          print(result.exception!.graphqlErrors.toString());
           return Material(
               child: Center(
-                  child: Text(result.exception.graphqlErrors.toString())));
+                  child: Text(result.exception!.graphqlErrors.toString())));
         }
         if (result.isLoading) {
           return Center(child: CircularProgressIndicator());
         }
 
         return ListView(
-          children: (result.data["Page"]['media'] as List).map((anime) {
+          children: (result.data!["Page"]['media'] as List).map((anime) {
             var animeSummary = AnimeSummary.fromJson(anime);
             return AnimeItem(animeSummary: animeSummary);
           }).toList(),
@@ -82,8 +82,8 @@ class SearchAnimePage extends SearchDelegate {
 
 class AnimeItem extends StatelessWidget {
   const AnimeItem({
-    Key key,
-    @required this.animeSummary,
+    Key? key,
+    required this.animeSummary,
   }) : super(key: key);
 
   final AnimeSummary animeSummary;
@@ -96,7 +96,7 @@ class AnimeItem extends StatelessWidget {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => AnimeInfo(animeId: animeSummary.id),
+              builder: (_) => AnimeInfo(animeId: animeSummary.id!),
             ),
           ),
           child: Row(
@@ -104,7 +104,7 @@ class AnimeItem extends StatelessWidget {
               Expanded(
                 child: CachedNetworkImage(
                   height: 70,
-                  imageUrl: animeSummary.coverImage,
+                  imageUrl: animeSummary.coverImage!,
                   fit: BoxFit.fill,
                   errorWidget: (_, a, b) => Icon(Icons.error_outline),
                 ),
@@ -113,13 +113,13 @@ class AnimeItem extends StatelessWidget {
                   flex: 5,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0, right: 4.0),
-                    child: Text(animeSummary.title),
+                    child: Text(animeSummary.title!),
                   ))
             ],
           ),
         ),
         Divider(
-          color: Colors.orange,
+          color: const Color(0xFFE6B17E),
         )
       ],
     );

@@ -1,9 +1,9 @@
 class AnimeSummary {
-  int id;
-  String title;
-  String coverImage;
-  String season;
-  String averageScore;
+  int? id;
+  String? title;
+  String? coverImage;
+  String? season;
+  String? averageScore;
 
   AnimeSummary({
     this.id,

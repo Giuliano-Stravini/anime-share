@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 class YearsAnimeList extends StatefulWidget {
   const YearsAnimeList({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -17,7 +17,7 @@ class YearsAnimeList extends StatefulWidget {
 
 class _YearsAnimeListState extends State<YearsAnimeList> {
   DateTime _selectedDate = DateTime.now();
-  int _seasonYear;
+  int? _seasonYear;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ Page(perPage: $count){
       appBar: AppBar(
         leading: Container(),
         leadingWidth: 0,
-        title: Text('Title'),
+        title: Text('Anime Finder'),
         actions: <Widget>[
           IconButton(
             onPressed: () =>
@@ -72,13 +72,13 @@ Page(perPage: $count){
           Padding(
             padding: const EdgeInsets.only(top: 16.0, left: 8),
             child: InkWell(
-              onTap: () => _buildShowBottomSheet(context, _seasonYear),
+              onTap: () => _buildShowBottomSheet(context, _seasonYear!),
               child: Row(
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "${AppLocalizations.of(context).season} $_seasonYear",
+                    "${AppLocalizations.of(context)!.season} $_seasonYear",
                     style: TextStyle(color: Colors.white),
                   ),
                   Icon(
@@ -96,12 +96,12 @@ Page(perPage: $count){
               "season": "WINTER",
               "count": 10
             },
-            title: "TOP 10 ${AppLocalizations.of(context).winter}*",
+            title: "TOP 10 ${AppLocalizations.of(context)!.winter}*",
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              '*${AppLocalizations.of(context).winterSeasonDuration.replaceFirst('[X]', (_seasonYear - 1).toString()).replaceFirst('[Y]', _seasonYear.toString())}',
+              '*${AppLocalizations.of(context)!.winterSeasonDuration.replaceFirst('[X]', (_seasonYear! - 1).toString()).replaceFirst('[Y]', _seasonYear.toString())}',
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -112,7 +112,7 @@ Page(perPage: $count){
               "season": "SPRING",
               "count": 10
             },
-            title: "TOP 10 ${AppLocalizations.of(context).spring}",
+            title: "TOP 10 ${AppLocalizations.of(context)!.spring}",
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -121,7 +121,7 @@ Page(perPage: $count){
               "season": "SUMMER",
               "count": 10
             },
-            title: "TOP 10 ${AppLocalizations.of(context).summer}",
+            title: "TOP 10 ${AppLocalizations.of(context)!.summer}",
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -130,7 +130,7 @@ Page(perPage: $count){
               "season": "FALL",
               "count": 10
             },
-            title: "TOP 10 ${AppLocalizations.of(context).fall}",
+            title: "TOP 10 ${AppLocalizations.of(context)!.fall}",
           ),
         ],
       ),
@@ -158,7 +158,7 @@ Page(perPage: $count){
 }
 
 class Menu extends StatefulWidget {
-  Menu({Key key}) : super(key: key);
+  Menu({Key? key}) : super(key: key);
 
   @override
   MenuState createState() => MenuState();
@@ -212,7 +212,7 @@ class MenuState extends State<Menu> {
 }
 
 class FavoritePage extends StatelessWidget {
-  const FavoritePage({Key key}) : super(key: key);
+  const FavoritePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

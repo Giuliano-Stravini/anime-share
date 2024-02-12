@@ -49,11 +49,13 @@ class MyApp extends StatelessWidget {
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               theme: ThemeData.dark().copyWith(
-                colorScheme: ThemeData.dark()
-                    .colorScheme
-                    .copyWith(primary: Colors.orange),
+                primaryColor: const Color(0xFF120703),
+                colorScheme: ThemeData.dark().colorScheme.copyWith(
+                      primary: const Color(0xFFE6B17E),
+                    ),
                 timePickerTheme: TimePickerThemeData(),
-                buttonTheme: ButtonThemeData(buttonColor: Colors.orange),
+                buttonTheme:
+                    ButtonThemeData(buttonColor: const Color(0xFFE6B17E)),
               ),
               home: Scaffold(
                   // bottomNavigationBar: BottomNavigationBar(
@@ -120,15 +122,15 @@ class MyApp extends StatelessWidget {
 // }
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
   bool _isObscure = true;
 
   @override
@@ -185,7 +187,8 @@ class _LoginPageState extends State<LoginPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.orange),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE6B17E)),
                   onPressed: () {
                     // _userStore.login(
                     //     email: _emailController.value.text,
@@ -198,7 +201,8 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                style: OutlinedButton.styleFrom(primary: Colors.orange),
+                style: OutlinedButton.styleFrom(
+                    backgroundColor: const Color(0xFFE6B17E)),
                 onPressed: () => Navigator.push(
                     context, MaterialPageRoute(builder: (_) => SignUpPage())),
                 child: Text("SignUp"),
@@ -213,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
 }
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage({Key key}) : super(key: key);
+  SignUpPage({Key? key}) : super(key: key);
 
   @override
   _SignUpPageState createState() => _SignUpPageState();
@@ -270,7 +274,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: EdgeInsets.only(top: 8),
                 child: !_loading
                     ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(primary: Colors.orange),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE6B17E)),
                         onPressed: () async {
                           // setState(() {
                           //   _loading = true;
@@ -296,8 +301,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       )
                     : Center(
                         child: CircularProgressIndicator(
-                        valueColor:
-                            new AlwaysStoppedAnimation<Color>(Colors.orange),
+                        valueColor: new AlwaysStoppedAnimation<Color>(
+                            const Color(0xFFE6B17E)),
                       )),
               ),
             ),

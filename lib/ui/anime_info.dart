@@ -45,7 +45,7 @@ query($id: Int!){
 ''';
 
 class AnimeInfo extends StatelessWidget {
-  const AnimeInfo({Key key, @required this.animeId}) : super(key: key);
+  const AnimeInfo({Key? key, required this.animeId}) : super(key: key);
 
   final int animeId;
 
@@ -58,21 +58,32 @@ class AnimeInfo extends StatelessWidget {
         ),
         builder: (result, {fetchMore, refetch}) {
           if (result.exception != null) {
-            print(result.exception.graphqlErrors.toString());
-            return Text(result.exception.graphqlErrors.toString());
+            print(result.exception?.graphqlErrors.toString());
+            return Text(result.exception?.graphqlErrors.toString() ?? "null");
           }
           if (result.isLoading) {
             return Material(
-              child: Center(
-                child: CircularProgressIndicator(),
+              child: Expanded(
+                child: Center(
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        Spacer(),
+                        CircularProgressIndicator(),
+                        Text("${AppLocalizations.of(context)?.loading}..."),
+                        Spacer(),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             );
           }
-          var anime = Anime.fromJson(result.data['Media']);
+          var anime = Anime.fromJson(result.data?['Media']);
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(anime.title),
+              title: Text(anime.title ?? "Title null"),
               actions: [
                 IconButton(
                   icon: Icon(Icons.share),
@@ -80,7 +91,7 @@ class AnimeInfo extends StatelessWidget {
                     try {
                       // Saved with this method.
 
-                      await Share.share(anime.title);
+                      await Share.share(anime.title ?? "Title null");
                     } on PlatformException catch (error) {
                       print(error);
                     }
@@ -95,22 +106,23 @@ class AnimeInfo extends StatelessWidget {
               child: ListView(
                 shrinkWrap: true,
                 children: <Widget>[
-                  Center(
-                    child: CachedNetworkImage(
-                      width: double.infinity,
-                      fit: BoxFit.fitWidth,
-                      imageUrl: result.data["Media"]["bannerImage"] ??
-                          "https://picsum.photos/200/400",
-                      errorWidget: (context, error, object) => SizedBox(
-                          height: 30,
-                          child: Icon(
-                            Icons.error_outline,
-                            size: 8,
-                          )),
-                    ),
-                  ),
+                  anime.bannerImage?.isNotEmpty ?? false
+                      ? Center(
+                          child: CachedNetworkImage(
+                            width: double.infinity,
+                            fit: BoxFit.fitWidth,
+                            imageUrl: anime.bannerImage ?? "null",
+                            errorWidget: (context, error, object) => SizedBox(
+                                height: 30,
+                                child: Icon(
+                                  Icons.error_outline,
+                                  size: 8,
+                                )),
+                          ),
+                        )
+                      : Container(),
                   Divider(
-                    color: Colors.orange,
+                    color: const Color(0xFFE6B17E),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -127,17 +139,21 @@ class AnimeInfo extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Hero(
                                   tag: "coverImage_$animeId",
-                                  child: CachedNetworkImage(
-                                    imageUrl: result.data['Media']['coverImage']
-                                            ['large'] ??
-                                        "https://picsum.photos/200/400",
-                                    errorWidget: (context, error, object) =>
-                                        SizedBox(
-                                            child: Icon(
-                                      Icons.error_outline,
-                                      size: 8,
-                                    )),
-                                  ),
+                                  child: (result.data?['Media']['coverImage']
+                                              ['large'] as String)
+                                          .isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: result.data?['Media']
+                                              ['coverImage']['large'],
+                                          errorWidget:
+                                              (context, error, object) =>
+                                                  SizedBox(
+                                                      child: Icon(
+                                            Icons.error_outline,
+                                            size: 8,
+                                          )),
+                                        )
+                                      : Container(),
                                 ),
                               ),
                             ),
@@ -148,36 +164,36 @@ class AnimeInfo extends StatelessWidget {
                                 children: <Widget>[
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).title}",
-                                      info: anime.title),
+                                          "${AppLocalizations.of(context)?.title}",
+                                      info: anime.title ?? "Title null"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).season}",
+                                          "${AppLocalizations.of(context)?.season}",
                                       info:
-                                          "${seasonTranslate(anime.season, context)}/${anime.seasonYear}"),
+                                          "${seasonTranslate(anime.season ?? 'null', context)}/${anime.seasonYear}"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).score}",
+                                          "${AppLocalizations.of(context)?.score}",
                                       info: "${anime.averageScore}"),
                                   _buildInfoText(
                                       text: "Status",
                                       info:
-                                          "${statusTranslate(anime.status, context)}"),
+                                          "${statusTranslate(anime.status ?? 'null', context)}"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).episodes}",
+                                          "${AppLocalizations.of(context)?.episodes}",
                                       info: "${anime.episodes}"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).start}",
+                                          "${AppLocalizations.of(context)?.start}",
                                       info: "${anime.startDate}"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).end}",
+                                          "${AppLocalizations.of(context)?.end}",
                                       info: "${anime.endDate}"),
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context).genres}",
+                                          "${AppLocalizations.of(context)?.genres}",
                                       info: "${anime.genres}"),
                                 ],
                               ),
@@ -190,18 +206,18 @@ class AnimeInfo extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                  "${AppLocalizations.of(context).description}: "),
+                                  "${AppLocalizations.of(context)?.description}: "),
                               FutureBuilder<Translation>(
-                                  future:
-                                      translateApi(anime.description, context),
+                                  future: translateApi(
+                                      anime.description ?? 'null', context),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData ||
                                         AppLocalizations.of(context)
-                                                .localeName ==
+                                                ?.localeName ==
                                             'en') {
-                                      return Text(anime.description);
+                                      return Text(anime.description ?? 'null');
                                     }
-                                    return Text(snapshot.data.text);
+                                    return Text(snapshot.data?.text ?? 'null');
                                   }),
                             ],
                           ),
@@ -216,7 +232,7 @@ class AnimeInfo extends StatelessWidget {
         });
   }
 
-  Padding _buildInfoText({String text, String info}) {
+  Padding _buildInfoText({String? text, String? info}) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 2),
         child: Text(
@@ -228,17 +244,13 @@ class AnimeInfo extends StatelessWidget {
   String seasonTranslate(String season, BuildContext context) {
     switch (season) {
       case "WINTER":
-        return AppLocalizations.of(context).winter;
-        break;
+        return AppLocalizations.of(context)?.winter ?? 'null';
       case "FALL":
-        return AppLocalizations.of(context).fall;
-        break;
+        return AppLocalizations.of(context)?.fall ?? 'null';
       case "SUMMER":
-        return AppLocalizations.of(context).summer;
-        break;
+        return AppLocalizations.of(context)?.summer ?? 'null';
       case "SPRING":
-        return AppLocalizations.of(context).spring;
-        break;
+        return AppLocalizations.of(context)?.spring ?? 'null';
       default:
         return "";
     }
@@ -247,20 +259,15 @@ class AnimeInfo extends StatelessWidget {
   String statusTranslate(String status, BuildContext context) {
     switch (status) {
       case "FINISHED":
-        return AppLocalizations.of(context).finished;
-        break;
+        return AppLocalizations.of(context)!.finished;
       case "RELEASING":
-        return AppLocalizations.of(context).releasing;
-        break;
+        return AppLocalizations.of(context)!.releasing;
       case "NOT_YET_RELEASED":
-        return AppLocalizations.of(context).notYetReleased;
-        break;
+        return AppLocalizations.of(context)!.notYetReleased;
       case "CANCELLED":
-        return AppLocalizations.of(context).cancelled;
-        break;
+        return AppLocalizations.of(context)!.cancelled;
       case "HIATUS":
-        return AppLocalizations.of(context).hiatus;
-        break;
+        return AppLocalizations.of(context)!.hiatus;
       default:
         return "";
     }
@@ -270,7 +277,6 @@ class AnimeInfo extends StatelessWidget {
     final translator = GoogleTranslator();
 
     return translator.translate(text,
-        from: 'en', to: AppLocalizations.of(context).localeName);
-    // prints Hello. Are you okay?
+        from: 'en', to: AppLocalizations.of(context)!.localeName);
   }
 }

@@ -1,20 +1,20 @@
 import 'package:intl/intl.dart';
 
 class Anime {
-  String title;
-  String titleEn;
-  String coverImage;
-  String bannerImage;
-  String averageScore;
-  String season;
-  int seasonYear;
-  String status;
-  String format;
-  String description;
-  String startDate;
-  String endDate;
-  int episodes;
-  List<String> genres;
+  String? title;
+  String? titleEn;
+  String? coverImage;
+  String? bannerImage;
+  String? averageScore;
+  String? season;
+  int? seasonYear;
+  String? status;
+  String? format;
+  String? description;
+  String? startDate;
+  String? endDate;
+  int? episodes;
+  List<String>? genres;
 
   Anime({
     this.title,

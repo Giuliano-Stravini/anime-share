@@ -13,10 +13,10 @@ import 'package:shimmer/shimmer.dart';
 
 class AnimeCardList extends StatefulWidget {
   const AnimeCardList({
-    Key key,
-    @required this.query,
-    @required this.variables,
-    @required this.title,
+    Key? key,
+    required this.query,
+    required this.variables,
+    required this.title,
   }) : super(key: key);
 
   final String query;
@@ -36,12 +36,12 @@ class _AnimeCardListState extends State<AnimeCardList> {
         document: gql(widget.query),
         variables: widget.variables,
       ),
-      builder: (QueryResult result,
-          {VoidCallback refetch, FetchMore fetchMore}) {
-        if (result.exception != null) {
+      builder: (QueryResult? result,
+          {VoidCallback? refetch, FetchMore? fetchMore}) {
+        if (result?.exception != null) {
           print("error");
-          print(result.exception.graphqlErrors.toString());
-          return Text(result.exception.graphqlErrors.toString());
+          print(result?.exception?.graphqlErrors.toString());
+          return Text(result?.exception?.graphqlErrors.toString() ?? "Null");
         }
 
         return Column(
@@ -61,7 +61,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
                     ),
                   ),
                   Divider(
-                    color: Colors.orange,
+                    color: const Color(0xFFE6B17E),
                   )
                 ],
               ),
@@ -73,15 +73,15 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 childAspectRatio: 4 / 3,
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
-                children: result.isLoading
+                children: result?.isLoading ?? true
                     ? List.generate(
                         9,
                         (index) => Shimmer.fromColors(
                             child: Container(),
                             baseColor: Colors.grey,
-                            highlightColor: Colors.orange))
+                            highlightColor: const Color(0xFFE6B17E)))
                     : [
-                        ...(result.data['Page']["media"] as List)
+                        ...(result?.data?['Page']["media"] as List)
                             .map((animeJson) {
                           var animeSummary = AnimeSummary.fromJson(animeJson);
 
@@ -90,7 +90,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => AnimeInfo(
-                                  animeId: animeSummary.id,
+                                  animeId: animeSummary.id ?? 0,
                                 ),
                               ),
                             ),
@@ -119,20 +119,20 @@ class _AnimeCardListState extends State<AnimeCardList> {
                                         .replaceAll("perPage: \$count", "")),
                                     variables: widget.variables,
                                   ),
-                                  builder: (QueryResult result,
-                                      {VoidCallback refetch,
-                                      FetchMore fetchMore}) {
+                                  builder: (QueryResult? result,
+                                      {VoidCallback? refetch,
+                                      FetchMore? fetchMore}) {
                                     return Scaffold(
                                       appBar: AppBar(
                                         title: Text("Todos"),
                                       ),
-                                      body: result.isLoading
+                                      body: result?.isLoading ?? true
                                           ? Center(
                                               child:
                                                   CircularProgressIndicator(),
                                             )
                                           : ListView(
-                                              children: (result.data['Page']
+                                              children: (result?.data?['Page']
                                                       ["media"] as List)
                                                   .map((animeJson) {
                                               var animeSummary =
@@ -164,7 +164,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
             Hero(
               tag: "coverImage_${animeSummary.id ?? 0}",
               child: CachedNetworkImage(
-                imageUrl: animeSummary.coverImage,
+                imageUrl: animeSummary.coverImage ?? 'null',
                 placeholder: (context, url) {
                   return Container();
                 },
@@ -210,7 +210,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 color: Colors.black54,
                 padding: EdgeInsets.all(4),
                 child: Text(
-                  animeSummary?.averageScore?.toString() ?? "",
+                  animeSummary.averageScore?.toString() ?? "",
                   style: TextStyle(fontSize: 12),
                 ),
               ),
@@ -221,7 +221,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 width: 120,
                 color: Colors.black54,
                 child: Text(
-                  animeSummary?.title ?? "",
+                  animeSummary.title ?? "",
                   style: TextStyle(fontSize: 14),
                 ),
               ),
