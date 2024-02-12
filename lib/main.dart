@@ -1,6 +1,9 @@
 import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,7 +11,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  runApp(MyApp());
+}
 
 final HttpLink httpLink = HttpLink(
   'https://graphql.anilist.co',
@@ -31,7 +40,20 @@ ValueNotifier<GraphQLClient> client = ValueNotifier(
   ),
 );
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late int navigationIndex;
+
+  @override
+  void initState() {
+    navigationIndex = 0;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
@@ -58,20 +80,39 @@ class MyApp extends StatelessWidget {
                     ButtonThemeData(buttonColor: const Color(0xFFE6B17E)),
               ),
               home: Scaffold(
-                  // bottomNavigationBar: BottomNavigationBar(
-                  //   type: BottomNavigationBarType.shifting,
-                  //   items: [
-                  //     BottomNavigationBarItem(
-                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
-                  //     BottomNavigationBarItem(
-                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
-                  //     BottomNavigationBarItem(
-                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
-                  //     BottomNavigationBarItem(
-                  //         icon: Icon(Icons.waterfall_chart), label: 'Label'),
-                  //   ],
-                  // ),
-                  body: YearsAnimeList()
+                  bottomNavigationBar: NavigationBar(
+                    height: 60,
+                    indicatorColor: Colors.orange,
+                    selectedIndex: navigationIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        navigationIndex = value;
+                      });
+                    },
+                    destinations: <Widget>[
+                      NavigationDestination(
+                          tooltip: 'home',
+                          icon: Icon(Icons.home),
+                          label: 'home'),
+                      NavigationDestination(
+                          tooltip: 'favorite',
+                          icon: Icon(Icons.star),
+                          label: 'favorite'),
+                      NavigationDestination(
+                          tooltip: 'profile',
+                          icon: Icon(Icons.person),
+                          label: 'profile')
+                    ],
+                  ),
+                  body: <Widget>[
+                    YearsAnimeList(),
+                    Container(
+                      color: Colors.amber,
+                    ),
+                    Container(
+                      color: Colors.orange,
+                    )
+                  ][navigationIndex]
 
                   //      CheckUser(
                   //   userStore: userStore,
