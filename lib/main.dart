@@ -81,7 +81,9 @@ class _MyAppState extends State<MyApp> {
               ),
               home: Scaffold(
                   bottomNavigationBar: NavigationBar(
-                    height: 60,
+                    height: 40,
+                    labelBehavior:
+                        NavigationDestinationLabelBehavior.alwaysHide,
                     indicatorColor: Colors.orange,
                     selectedIndex: navigationIndex,
                     onDestinationSelected: (value) {
@@ -92,7 +94,7 @@ class _MyAppState extends State<MyApp> {
                     destinations: <Widget>[
                       NavigationDestination(
                           tooltip: 'home',
-                          icon: Icon(Icons.home),
+                          icon: Icon(Icons.list),
                           label: 'home'),
                       NavigationDestination(
                           tooltip: 'favorite',
