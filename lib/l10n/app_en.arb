@@ -10,6 +10,7 @@
     "start": "Start",
     "end": "End",
     "genres": "Genres",
+    "licensedBy": "licensedBy",
     "episodes": "Episodes",
     "description": "Description",
     "finished": "Finished",

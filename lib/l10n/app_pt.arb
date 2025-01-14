@@ -10,6 +10,7 @@
     "start": "Começo",
     "end": "Fim",
     "genres": "Genero",
+    "licensedBy": "Licenciado por",
     "episodes": "Episódios",
     "description": "Sinopse",
     "finished": "Finalizado",

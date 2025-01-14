@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:translator/translator.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 var animeInfoQuery = r'''
 query($id: Int!){
@@ -39,7 +40,14 @@ query($id: Int!){
     day
   },
   episodes,
-  genres
+  genres,
+  externalLinks {
+    id,
+    icon,
+    site,
+    url,
+    color
+    }
   }
 }
 ''';
@@ -59,22 +67,21 @@ class AnimeInfo extends StatelessWidget {
         builder: (result, {fetchMore, refetch}) {
           if (result.exception != null) {
             print(result.exception?.graphqlErrors.toString());
-            return Text(result.exception?.graphqlErrors.toString() ?? "null");
+            return Material(
+                color: Colors.white54,
+                child:
+                    Text(result.exception?.graphqlErrors.toString() ?? "null"));
           }
           if (result.isLoading) {
             return Material(
-              child: Expanded(
-                child: Center(
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        Spacer(),
-                        CircularProgressIndicator(),
-                        Text("${AppLocalizations.of(context)?.loading}..."),
-                        Spacer(),
-                      ],
-                    ),
-                  ),
+              child: Center(
+                child: Column(
+                  children: [
+                    Spacer(),
+                    CircularProgressIndicator(),
+                    Text("${AppLocalizations.of(context)?.loading}..."),
+                    Spacer(),
+                  ],
                 ),
               ),
             );
@@ -130,6 +137,16 @@ class AnimeInfo extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            anime.title ?? "-",
+                            style: TextStyle(
+                                color: Colors.orange,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -164,10 +181,6 @@ class AnimeInfo extends StatelessWidget {
                                 children: <Widget>[
                                   _buildInfoText(
                                       text:
-                                          "${AppLocalizations.of(context)?.title}",
-                                      info: anime.title ?? "Title null"),
-                                  _buildInfoText(
-                                      text:
                                           "${AppLocalizations.of(context)?.season}",
                                       info:
                                           "${seasonTranslate(anime.season ?? 'null', context)}/${anime.seasonYear}"),
@@ -195,6 +208,8 @@ class AnimeInfo extends StatelessWidget {
                                       text:
                                           "${AppLocalizations.of(context)?.genres}",
                                       info: "${anime.genres}"),
+                                  ..._buildExternalLinkText(
+                                      externalLinks: anime.externalLinks),
                                 ],
                               ),
                             ),
@@ -239,6 +254,25 @@ class AnimeInfo extends StatelessWidget {
           "$text: $info.",
           softWrap: true,
         ));
+  }
+
+  List<Widget> _buildExternalLinkText({List<ExternalLinks>? externalLinks}) {
+    return externalLinks!.map((e) {
+      return Padding(
+          padding: EdgeInsets.symmetric(vertical: 2),
+          child: Row(
+            children: [
+              Image.network(e.icon ?? "", height: 20, width: 20),
+              TextButton(
+                child: Text("${e.site}"),
+                style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all(Color(Colors.white.value))),
+                onPressed: () => launchUrlString(e.url!),
+              ),
+            ],
+          ));
+    }).toList();
   }
 
   String seasonTranslate(String season, BuildContext context) {
