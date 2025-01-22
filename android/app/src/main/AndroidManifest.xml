@@ -27,7 +27,7 @@
 
     <application
         android:name="${applicationName}"
-        android:label="alreadywatched"
+        android:label="Anime Finder"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:exported="true"
