@@ -67,7 +67,7 @@ class _AnimeCardListState extends State<AnimeCardList> {
               ),
             ),
             SizedBox(
-              height: 170,
+              height: 200,
               child: GridView.count(
                 crossAxisCount: 1,
                 childAspectRatio: 4 / 3,
@@ -158,51 +158,54 @@ class _AnimeCardListState extends State<AnimeCardList> {
 
   Card _buildCard(AnimeSummary animeSummary) {
     return Card(
-        margin: EdgeInsets.symmetric(horizontal: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
         child: Stack(
+          fit: StackFit.expand,
           children: <Widget>[
             Hero(
               tag: "coverImage_${animeSummary.id ?? 0}",
               child: CachedNetworkImage(
                 imageUrl: animeSummary.coverImage ?? 'null',
                 placeholder: (context, url) {
-                  return Container();
+                  return Center(child: CircularProgressIndicator());
                 },
                 errorWidget: (context, error, object) =>
                     Icon(Icons.error_outline),
               ),
             ),
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Container(
-                  color: Colors.black54,
-                  padding: EdgeInsets.all(4),
-                  child: Container()
-                  // InkWell(
-                  //   onTap: () {
-                  //     print(userStore.user.uid);
-                  //     Provider.of<UserProvider>(context,
-                  //             listen: false)
-                  //         .updateFavoriteList(animeSummary.id,
-                  //             userStore.user.uid);
-                  //     setState(() {});
-                  //   },
-                  //   child: userStore
-                  //           .checkFavorite(animeSummary.id)
-                  //       ? Icon(
-                  //           Icons.favorite,
-                  //           size: Responsive().horizontal(5),
-                  //           color: Colors.red,
-                  //         )
-                  //       : Icon(
-                  //           Icons.favorite_border,
-                  //           size: Responsive().horizontal(5),
-                  //           color: Colors.white,
-                  //         ),
-                  // ),
-                  ),
-            ),
+            // Positioned(
+            //   top: 0,
+            //   right: 0,
+            //   child: Container(
+            //       color: Colors.black54,
+            //       padding: EdgeInsets.all(4),
+            //       child: Container()
+            //       // InkWell(
+            //       //   onTap: () {
+            //       //     print(userStore.user.uid);
+            //       //     Provider.of<UserProvider>(context,
+            //       //             listen: false)
+            //       //         .updateFavoriteList(animeSummary.id,
+            //       //             userStore.user.uid);
+            //       //     setState(() {});
+            //       //   },
+            //       //   child: userStore
+            //       //           .checkFavorite(animeSummary.id)
+            //       //       ? Icon(
+            //       //           Icons.favorite,
+            //       //           size: Responsive().horizontal(5),
+            //       //           color: Colors.red,
+            //       //         )
+            //       //       : Icon(
+            //       //           Icons.favorite_border,
+            //       //           size: Responsive().horizontal(5),
+            //       //           color: Colors.white,
+            //       //         ),
+            //       // ),
+            //       ),
+            // ),
             Positioned(
               top: 0,
               left: 0,
@@ -211,17 +214,19 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 padding: EdgeInsets.all(4),
                 child: Text(
                   animeSummary.averageScore?.toString() ?? "",
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 14),
                 ),
               ),
             ),
             Positioned(
               bottom: 0,
               child: Container(
-                width: 120,
                 color: Colors.black54,
                 child: Text(
                   animeSummary.title ?? "",
+                  maxLines: 2,
+                  softWrap: true,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 14),
                 ),
               ),

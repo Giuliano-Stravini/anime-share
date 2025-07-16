@@ -1,8 +1,8 @@
+import 'package:alreadywatched/l10n/app_localizations.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/anime_card_list.dart';
 import 'package:alreadywatched/ui/search_anime_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:provider/provider.dart';
 

@@ -1,10 +1,9 @@
+import 'package:alreadywatched/l10n/app_localizations.dart';
 import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
 import 'package:alreadywatched/ui/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -154,33 +153,20 @@ class _LoginPageState extends State<LoginPage> {
             Spacer(),
             Text("Logo"),
             Spacer(),
-            TextField(
+            CustomTextField(
               controller: _emailController,
-              onChanged: (String newValue) {
-                _emailController.value.copyWith(text: newValue);
-              },
-              decoration: InputDecoration(
-                hintText: "E-mail",
-                prefixIcon: Icon(Icons.email),
-              ),
+              hintText: "E-mail",
+              prefixIcon: Icons.email,
             ),
-            TextField(
+            CustomTextField(
               controller: _passwordController,
-              onChanged: (String newValue) {
-                _passwordController.value.copyWith(text: newValue);
-              },
+              hintText: "Password",
+              prefixIcon: Icons.vpn_key,
               obscureText: _isObscure,
-              decoration: InputDecoration(
-                hintText: "Password",
-                prefixIcon: Icon(Icons.vpn_key),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                      _isObscure ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() {
-                    _isObscure = !_isObscure;
-                  }),
-                ),
-              ),
+              showToggle: true,
+              onToggleObscure: () => setState(() {
+                _isObscure = !_isObscure;
+              }),
             ),
             Padding(
               padding: EdgeInsets.only(top: 8),
@@ -240,33 +226,20 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
+            CustomTextField(
               controller: _emailController,
-              onChanged: (String newValue) {
-                _emailController.value.copyWith(text: newValue);
-              },
-              decoration: InputDecoration(
-                hintText: "E-mail",
-                prefixIcon: Icon(Icons.email),
-              ),
+              hintText: "E-mail",
+              prefixIcon: Icons.email,
             ),
-            TextField(
+            CustomTextField(
               controller: _passwordController,
-              onChanged: (String newValue) {
-                _passwordController.value.copyWith(text: newValue);
-              },
+              hintText: "Password",
+              prefixIcon: Icons.vpn_key,
               obscureText: _isObscure,
-              decoration: InputDecoration(
-                hintText: "Password",
-                prefixIcon: Icon(Icons.vpn_key),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                      _isObscure ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() {
-                    _isObscure = !_isObscure;
-                  }),
-                ),
-              ),
+              showToggle: true,
+              onToggleObscure: () => setState(() {
+                _isObscure = !_isObscure;
+              }),
             ),
             SizedBox(
               width: double.infinity,
@@ -308,6 +281,45 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final IconData prefixIcon;
+  final bool obscureText;
+  final VoidCallback? onToggleObscure;
+  final bool showToggle;
+
+  const CustomTextField({
+    required this.controller,
+    required this.hintText,
+    required this.prefixIcon,
+    this.obscureText = false,
+    this.onToggleObscure,
+    this.showToggle = false,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: Icon(prefixIcon),
+        suffixIcon: showToggle
+            ? IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: onToggleObscure,
+              )
+            : null,
       ),
     );
   }

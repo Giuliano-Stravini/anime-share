@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alreadywatched/l10n/app_localizations.dart';
 import 'package:alreadywatched/models/anime.dart';
 import 'package:alreadywatched/responsive.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
