@@ -4,7 +4,7 @@
     "summer": "Summer",
     "spring": "Spring",
     "season": "Season",
-    "winterSeasonDuration": "December/ [X] to February/ [Y]",
+    "winterSeasonDuration": "December/[X] to February/[Y]",
     "title": "Title",
     "score": "Score",
     "start": "Start",
@@ -18,5 +18,7 @@
     "notYetReleased": "notYetReleased",
     "cancelled": "Cancelled",
     "loading": "loading",
-    "hiatus": "Hiatus"
+    "hiatus": "Hiatus",
+    "search": "Search"
+
 }

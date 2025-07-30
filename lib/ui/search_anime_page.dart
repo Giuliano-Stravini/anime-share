@@ -1,11 +1,28 @@
 import 'package:alreadywatched/models/anime_summary.dart';
 import 'package:alreadywatched/ui/anime_info.dart';
+import 'package:alreadywatched/ui/home_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
-class SearchAnimePage extends SearchDelegate {
-  String animeQuery = r'''
+class SearchAnimePage extends StatefulWidget {
+  const SearchAnimePage({required this.query});
+  final String query;
+
+  @override
+  State<SearchAnimePage> createState() => _SearchAnimePageState();
+}
+
+class _SearchAnimePageState extends State<SearchAnimePage> {
+  String _query = '';
+
+  @override
+  void initState() {
+    _query = widget.query;
+    super.initState();
+  }
+
+  final String animeQuery = r'''
   query($animeInput: String!){
     Page{
       media(search: $animeInput, isAdult: false, type: ANIME){
@@ -23,60 +40,57 @@ class SearchAnimePage extends SearchDelegate {
   ''';
 
   @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.search),
-        onPressed: () {
-          showResults(context);
-        },
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Anime Finder'),
       ),
-    ];
-  }
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ContentSearchField(
+              onPressedCallback: (value) {
+                setState(() {
+                  _query = value;
+                });
+              },
+            ),
+          ),
+          Query(
+            options: QueryOptions(
+              document: gql(animeQuery),
+              variables: {'animeInput': _query},
+            ),
+            builder: (QueryResult? result,
+                {VoidCallback? refetch, FetchMore? fetchMore}) {
+              if (result!.exception != null) {
+                print("error");
+                print(result.exception!.graphqlErrors.toString());
+                return Material(
+                    child: Center(
+                        child:
+                            Text(result.exception!.graphqlErrors.toString())));
+              }
+              if (result.isLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
 
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return Query(
-      options: QueryOptions(
-        document: gql(animeQuery),
-        variables: {'animeInput': query},
+              return Expanded(
+                child: ListView(
+                  children:
+                      (result.data!["Page"]['media'] as List).map((anime) {
+                    var animeSummary = AnimeSummary.fromJson(anime);
+                    return AnimeItem(animeSummary: animeSummary);
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      builder: (QueryResult? result,
-          {VoidCallback? refetch, FetchMore? fetchMore}) {
-        if (result!.exception != null) {
-          print("error");
-          print(result.exception!.graphqlErrors.toString());
-          return Material(
-              child: Center(
-                  child: Text(result.exception!.graphqlErrors.toString())));
-        }
-        if (result.isLoading) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        return ListView(
-          children: (result.data!["Page"]['media'] as List).map((anime) {
-            var animeSummary = AnimeSummary.fromJson(anime);
-            return AnimeItem(animeSummary: animeSummary);
-          }).toList(),
-        );
-      },
     );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return Container();
   }
 }
 

@@ -24,7 +24,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get season => 'Season';
 
   @override
-  String get winterSeasonDuration => 'December/ [X] to February/ [Y]';
+  String get winterSeasonDuration => 'December/[X] to February/[Y]';
 
   @override
   String get title => 'Title';
@@ -67,4 +67,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get hiatus => 'Hiatus';
+
+  @override
+  String get search => 'Buscar';
 }

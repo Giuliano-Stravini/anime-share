@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:alreadywatched/l10n/app_localizations.dart';
 import 'package:alreadywatched/models/anime_summary.dart';
 import 'package:alreadywatched/responsive.dart';
 import 'package:alreadywatched/stores/user_store.dart';
@@ -17,10 +18,12 @@ class AnimeCardList extends StatefulWidget {
     required this.query,
     required this.variables,
     required this.title,
+    this.seasonYear,
   }) : super(key: key);
 
   final String query;
   final String title;
+  final int? seasonYear;
   final Map<String, dynamic> variables;
 
   @override
@@ -60,8 +63,20 @@ class _AnimeCardListState extends State<AnimeCardList> {
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Divider(
-                    color: const Color(0xFFE6B17E),
+                  widget.seasonYear != null
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            '*${AppLocalizations.of(context)!.winterSeasonDuration.replaceFirst('[X]', (widget.seasonYear! - 1).toString()).replaceFirst('[Y]', widget.seasonYear.toString())}',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        )
+                      : Container(),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Divider(
+                      color: const Color(0xFFE6B17E),
+                    ),
                   )
                 ],
               ),

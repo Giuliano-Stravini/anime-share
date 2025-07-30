@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @winterSeasonDuration.
   ///
   /// In en, this message translates to:
-  /// **'December/ [X] to February/ [Y]'**
+  /// **'December/[X] to February/[Y]'**
   String get winterSeasonDuration;
 
   /// No description provided for @title.
@@ -219,6 +219,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hiatus'**
   String get hiatus;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
 }
 
 class _AppLocalizationsDelegate

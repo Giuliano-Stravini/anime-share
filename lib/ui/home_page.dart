@@ -53,41 +53,58 @@ Page(perPage: $count){
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // drawer: Menu(),
       appBar: AppBar(
         leading: Container(),
         leadingWidth: 0,
+        centerTitle: true,
         title: Text('Anime Finder'),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () =>
-                showSearch(context: context, delegate: SearchAnimePage()),
-            icon: Icon(Icons.search),
-          )
-        ],
       ),
       body: ListView(
-        padding: EdgeInsets.only(bottom: 16),
+        padding: EdgeInsets.only(bottom: 16, left: 16),
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 8),
-            child: InkWell(
-              onTap: () => _buildShowBottomSheet(context, _seasonYear!),
-              child: Row(
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                // mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "${AppLocalizations.of(context)!.season} $_seasonYear",
-                    style: TextStyle(color: Colors.white),
+            padding: const EdgeInsets.only(right: 18.0, bottom: 16),
+            child: ContentSearchField(
+              onPressedCallback: (value) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SearchAnimePage(
+                      query: value.trim(),
+                    ),
                   ),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
+                );
+              },
             ),
+          ),
+          Row(
+            children: [
+              InkWell(
+                customBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0),
+                ),
+                onTap: () => _buildShowBottomSheet(context, _seasonYear!),
+                child: Row(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "${AppLocalizations.of(context)!.season} $_seasonYear",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              Spacer(),
+            ],
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -97,13 +114,7 @@ Page(perPage: $count){
               "count": 10
             },
             title: "TOP 10 ${AppLocalizations.of(context)!.winter}*",
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              '*${AppLocalizations.of(context)!.winterSeasonDuration.replaceFirst('[X]', (_seasonYear! - 1).toString()).replaceFirst('[Y]', _seasonYear.toString())}',
-              style: TextStyle(fontSize: 12),
-            ),
+            seasonYear: _seasonYear,
           ),
           AnimeCardList(
             query: seasonQuery,
@@ -154,6 +165,35 @@ Page(perPage: $count){
                 Navigator.pop(context);
               },
             ));
+  }
+}
+
+class ContentSearchField extends StatelessWidget {
+  ContentSearchField({required this.onPressedCallback});
+
+  void Function(String value) onPressedCallback = (value) {};
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: searchController,
+      decoration: InputDecoration(
+          hintText: AppLocalizations.of(context)!.search,
+          hintStyle: TextStyle(color: Colors.white),
+          suffixIcon: IconButton(
+              icon: Icon(Icons.search),
+              color: Colors.white,
+              onPressed: () {
+                onPressedCallback(searchController.text);
+              }),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(32.0),
+          ),
+          contentPadding: EdgeInsets.only(left: 24.0),
+          fillColor: const Color(0xFF120703),
+          filled: true),
+    );
   }
 }
 

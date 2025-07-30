@@ -96,15 +96,12 @@ class AnimeInfo extends StatelessWidget {
                   icon: Icon(Icons.share),
                   onPressed: () async {
                     try {
-                      // Saved with this method.
-
-                      await Share.share(anime.title ?? "Title null");
+                      SharePlus.instance.share(
+                          ShareParams(text: anime.title ?? "Title null"));
                     } on PlatformException catch (error) {
                       print(error);
                     }
                   },
-                  // onPressed: () => Share.text("title",
-                  //     "${anime.title}(${anime.titleEn})", 'text/plain'),
                 ),
               ],
             ),
