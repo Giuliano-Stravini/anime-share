@@ -188,39 +188,9 @@ class _AnimeCardListState extends State<AnimeCardList> {
                 },
                 errorWidget: (context, error, object) =>
                     Icon(Icons.error_outline),
+                fit: BoxFit.cover,
               ),
             ),
-            // Positioned(
-            //   top: 0,
-            //   right: 0,
-            //   child: Container(
-            //       color: Colors.black54,
-            //       padding: EdgeInsets.all(4),
-            //       child: Container()
-            //       // InkWell(
-            //       //   onTap: () {
-            //       //     print(userStore.user.uid);
-            //       //     Provider.of<UserProvider>(context,
-            //       //             listen: false)
-            //       //         .updateFavoriteList(animeSummary.id,
-            //       //             userStore.user.uid);
-            //       //     setState(() {});
-            //       //   },
-            //       //   child: userStore
-            //       //           .checkFavorite(animeSummary.id)
-            //       //       ? Icon(
-            //       //           Icons.favorite,
-            //       //           size: Responsive().horizontal(5),
-            //       //           color: Colors.red,
-            //       //         )
-            //       //       : Icon(
-            //       //           Icons.favorite_border,
-            //       //           size: Responsive().horizontal(5),
-            //       //           color: Colors.white,
-            //       //         ),
-            //       // ),
-            //       ),
-            // ),
             Positioned(
               top: 0,
               left: 0,
@@ -234,15 +204,19 @@ class _AnimeCardListState extends State<AnimeCardList> {
               ),
             ),
             Positioned(
+              left: 0,
+              right: 0,
               bottom: 0,
               child: Container(
                 color: Colors.black54,
+                padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 child: Text(
                   animeSummary.title ?? "",
                   maxLines: 2,
-                  softWrap: true,
                   overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                   style: TextStyle(fontSize: 14),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
